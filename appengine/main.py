@@ -69,7 +69,13 @@ class GistViewHandler(webapp.RequestHandler):
 
     # display other files as source
     for f in files:
-      if not re.match("^readme(\.[a-z]+)?$", f, re.I):
+	  # skip binary files: list them, but don't show them
+      if files[f]['language'] == null:
+        self.response.out.write("""
+<h2><a name="%s" href="#%s">#</a>%s</h2>
+<p class="unsupported-filetype">Binary file</p>
+""" % (quote(f), quote(f), f))
+      else if not re.match("^readme(\.[a-z]+)?$", f, re.I):
         self.response.out.write("""
 <h2><a name="%s" href="#%s">#</a>%s</h2>
 <pre><code class="%s">%s</code></pre>
